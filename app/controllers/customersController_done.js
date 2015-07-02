@@ -1,17 +1,17 @@
 (function customersControllerIIFE(){
 
-  var CustomersController = function($scope, customersFactory, appSettings){
-    $scope.sortBy = "name";
-    $scope.reverse = false;
-    $scope.customers= [];
-    $scope.appSettings = appSettings;
+  var CustomersController = function(customersFactory, appSettings){
+    this.sortBy = "name";
+    this.reverse = false;
+    this.customers= [];
+    this.appSettings = appSettings;
 
     function init(){
       // Init the customers from the factory
-      //$scope.customers = customersFactory.getCustomers();
+      //this.customers = customersFactory.getCustomers();
       customersFactory.getCustomers()
       .success(function(customers){
-        $scope.customers = customers;
+        this.customers = customers;
       })
       .error(function(data, status, headers, config){
         console.log("Error getting customers from the remote api");
@@ -21,14 +21,14 @@
 
     init();
 
-    $scope.doSort = function(propName){
-      $scope.sortBy = propName;
-      $scope.reverse = !$scope.reverse;
+    this.doSort = function(propName){
+      this.sortBy = propName;
+      this.reverse = !this.reverse;
     };
 
   };
 
- CustomersController.$inject = ['$scope', 'customersFactory', 'appSettings'];
+ CustomersController.$inject = ['customersFactory', 'appSettings'];
 
  // The Controller is part of the module.
  angular.module('customersApp').controller('customersController', CustomersController);

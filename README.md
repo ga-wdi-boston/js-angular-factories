@@ -16,7 +16,7 @@ Oh, all but the app/customersData.js. And we'll see why we don't need this later
 
 #### Singleton
 
-The Singleton Design pattern will prevent more than one instance of a class to occur. One can only create one instance of a Singleton. 
+The Singleton Design pattern will prevent more than one instance of a class to occur. One can only create one instance of a Singleton.
 
 We've seen Singletons in the past when we've used an object literal to create only one Carlot, TodoList, etc.
 
@@ -41,7 +41,7 @@ Will return a custom object that can be used by multiple other components, typic
 Factories use the [Revealing Module Javascript Pattern](http://addyosmani.com/resources/essentialjsdesignpatterns/book/#revealingmodulepatternjavascript) to create the custom object they return.
 
 
-##### Create a app/services/customerFactory.js  
+##### Create a app/services/customerFactory.js
 
 ```
 (function customersFactoryIIFE(){
@@ -136,13 +136,13 @@ Factories use the [Revealing Module Javascript Pattern](http://addyosmani.com/re
 
 ```
 
-* Create an IIFE that will hide all the variables from Global scope.  
+* Create an IIFE that will hide all the variables from Global scope.
 * Create a Self Revealing Function, customersFactory, in the IIFE.
-* In the customersFactory function we will:  
-	* _hard code_ all the customer data.  
-		* _We'll remove this when we get customer data from the back end_  
-	* Create an empty object literal, "factory". 
-	* Create a method on factory, getCustomers, that can be used to access the customer data. 
+* In the customersFactory function we will:
+	* _hard code_ all the customer data.
+		* _We'll remove this when we get customer data from the back end_
+	* Create an empty object literal, "factory".
+	* Create a method on factory, getCustomers, that can be used to access the customer data.
 	* Create a method on factory, getCustomers, that given a customer id will return data for that customer.
 	* return the object literal "factory". _It will encapsulate all it's implementation and data inside the two methods, customersData and customerData._
 
@@ -169,7 +169,7 @@ Factories use the [Revealing Module Javascript Pattern](http://addyosmani.com/re
   </body>
 </html>
 
-```  
+```
 
 ##### Add the app/controllers/customersController.js
 
@@ -177,31 +177,31 @@ Factories use the [Revealing Module Javascript Pattern](http://addyosmani.com/re
 (function customersControllerIIFE(){
 
   // 1. Inject the customersFactory into this controller
-  var CustomersController = function($scope, customersFactory){
-    $scope.sortBy = "name";
-    $scope.reverse = false;
+  var CustomersController = function(customersFactory){
+    this.sortBy = "name";
+    this.reverse = false;
     // 2. Create an empty customers Array in the scope.
-    $scope.customers= [];
+    this.customers= [];
 
     // 3. Create a function that will set the customers Array in the scope
     // from the customersFactory
     function init(){
       // Init the customers from the factory
-      $scope.customers = customersFactory.getCustomers();
+      this.customers = customersFactory.getCustomers();
     }
 
     // 4. Initialize the controller.
     init();
 
-    $scope.doSort = function(propName){
-      $scope.sortBy = propName;
-      $scope.reverse = !$scope.reverse;
+    this.doSort = function(propName){
+      this.sortBy = propName;
+      this.reverse = !this.reverse;
     };
 
   };
 
  // Prevent the minifier from breaking dependency injection.
- CustomersController.$inject = ['$scope', 'customersFactory'];
+ CustomersController.$inject = ['customersFactory'];
 
  // The Controller is part of the module.
  angular.module('customersApp').controller('customersController', CustomersController);
@@ -209,42 +209,42 @@ Factories use the [Revealing Module Javascript Pattern](http://addyosmani.com/re
 })();
 ```
 
-1. Inject the customersFactory into this controller  
-2. Create an empty customers Array in the scope.  
+1. Inject the customersFactory into this controller
+2. Create an empty customers Array in the scope.
 3. Create a function that will set the customers Array in the scope from the customersFactory.getCustomers method.
-4. Initialize the controller.  
+4. Initialize the controller.
 
 ##### Add the app/controllers/ordersController.js
 
 ```
 (function ordersControllerIIFE(){
 
-  var OrdersController = function($scope, $routeParams, customersFactory){
+  var OrdersController = function($routeParams, customersFactory){
     var customerId = $routeParams.customerId;
-    $scope.customer= null;
+    this.customer= null;
 
     // private function, not available outside of IIFE
 
     function init(){
       // Search for the customer by id
-      $scope.customer = customersFactory.getCustomer(customerId);
+      this.customer = customersFactory.getCustomer(customerId);
     }
 
     init();
   };
 
   // Prevent the minifier from breaking dependency injection.
-  OrdersController.$inject = ['$scope', '$routeParams', 'customersFactory'];
+  OrdersController.$inject = ['$routeParams', 'customersFactory'];
 
   // The Controller is part of the module.
   angular.module('customersApp').controller('ordersController', OrdersController);
 
 })();
 ```
-1. Inject the customersFactory into this controller  
-2. Create an null customer.  
+1. Inject the customersFactory into this controller
+2. Create an null customer.
 3. Create a function, init, that will set the customers from the customerId param.
-4. Initialize the controller. 
+4. Initialize the controller.
 
 ##### Add the app/views/orders.html
 
@@ -312,19 +312,19 @@ _This is implemented in tbe "services" branch._
 (function customersControllerIIFE(){
 
   // 1. Inject the customersService into this controller
-  var CustomersController = function($scope, customersService){
+  var CustomersController = function(customersService){
 	 ...
 
     function init(){
       // Init the customers from the service
-      $scope.customers = customersService.getCustomers();
+      this.customers = customersService.getCustomers();
     }
 	...
 
   };
 
  // Prevent the minifier from breaking dependency injection.
- CustomersController.$inject = ['$scope', 'customersService'];
+ CustomersController.$inject = ['customersService'];
 
  ...
 
@@ -363,23 +363,23 @@ angular.module("customersApp").constant('appSettings', {
 
 ```
 
-##### Add the app settings to the $scope for the customers View, app/controllers/customersController.js .
+##### Add the app settings to the scope for the customers View, app/controllers/customersController.js .
 
 ```
 (function customersControllerIIFE(){
 
   // 1. Inject application wide value, appSetting.
-  var CustomersController = function($scope, customersFactory, appSettings){
+  var CustomersController = function(customersFactory, appSettings){
 	...
     // 2. Make the application wide settings available in the view.
-    $scope.appSettings = appSettings;
+    this.appSettings = appSettings;
 
 	...
 
   };
 
  // 3. Prevent the minifier from breaking dependency injection.
- CustomersController.$inject = ['$scope', 'customersFactory', 'appSettings'];
+ CustomersController.$inject = ['customersFactory', 'appSettings'];
  ...
 })();
 
@@ -401,12 +401,12 @@ angular.module("customersApp").constant('appSettings', {
 
 We are, finally, going to make remote API HTTP Request for the customer data. We will be using a very simple Rails app, actually created with the Rails API gem.
 
-The repo for this API is [Customers API](https://github.com/ga-wdi-boston/wdi_9_rails_customers_api). 
+The repo for this API is [Customers API](https://github.com/ga-wdi-boston/wdi_9_rails_customers_api).
 
 
 But, we will need to setup the Angular Factories we created above to make Ajax calls to this API.
 
-##### Modify the app/services/customersFactory.js 
+##### Modify the app/services/customersFactory.js
 
 ```
 (function customersFactoryIIFE(){
@@ -433,14 +433,14 @@ But, we will need to setup the Angular Factories we created above to make Ajax c
 
 ```
 
-* We've injected the Angular Ajax Service, __$http__ , in to this Factory. 
-	* The $http behaves very much like the jQuery $.ajax  
-* We have __FINALLY__ removed the hard coded customers data from our app. And now are making a remote API request for this data.  
-	``$http.get('http://localhost:3000/customers') ``  
-* And we are making a HTTP GET Request for a specific customers data.  
-	``$http.get('http://localhost:3000/customers/' + customerId) ``  
-* Doing the weasel work of preventing the javascript minification problems.  
-	``customersFactory.$inject = ['$http']; ``  
+* We've injected the Angular Ajax Service, __$http__ , in to this Factory.
+	* The $http behaves very much like the jQuery $.ajax
+* We have __FINALLY__ removed the hard coded customers data from our app. And now are making a remote API request for this data.
+	``$http.get('http://localhost:3000/customers') ``
+* And we are making a HTTP GET Request for a specific customers data.
+	``$http.get('http://localhost:3000/customers/' + customerId) ``
+* Doing the weasel work of preventing the javascript minification problems.
+	``customersFactory.$inject = ['$http']; ``
 
 Check out the $http Angular service. In each of the methods above we return a _Promise_ from the $http service. A Promise will be invoked when the Ajax asynchronous request is returned from the server.
 
@@ -451,13 +451,13 @@ Check out the $http Angular service. In each of the methods above we return a _P
 
   var CustomersController = function($scope, customersFactory, appSettings){
 
-	... 
+	...
     function init(){
       // Init the customers from the factory
-      //$scope.customers = customersFactory.getCustomers();
+      //this.customers = customersFactory.getCustomers();
       customersFactory.getCustomers()
       .success(function(customers){
-        $scope.customers = customers;
+        this.customers = customers;
       })
       .error(function(data, status, headers, config){
         console.log("Error getting customers from the remote api");
@@ -476,20 +476,20 @@ Check out the $http Angular service. In each of the methods above we return a _P
 
 ```
 
-* We have changed the init function to handle the _Promise_ returned by the customersFactory.getCustomers method. 
-	* The anonymous function passed to success will fire and update the ViewModel's, $scope, with the customers data.
-	* The anonymous function passed to error will fire if there is an error communicating with the API.  
+* We have changed the init function to handle the _Promise_ returned by the customersFactory.getCustomers method.
+	* The anonymous function passed to success will fire and update the ViewModel's, scope, with the customers data.
+	* The anonymous function passed to error will fire if there is an error communicating with the API.
 
 #### Modify the app/controllers/ordersController.js
 
 ```
-... 
+...
     function init(){
       // Search for the customer by id
-      // $scope.customer = customersFactory.getCustomer(customerId);
+      // this.customer = customersFactory.getCustomer(customerId);
       customersFactory.getCustomer(customerId)
         .success(function(customer){
-          $scope.customer = customer;
+          this.customer = customer;
         })
         .error(function(data, status, headers, config){
           console.log("Error getting a customer from the remote api");
@@ -499,11 +499,11 @@ Check out the $http Angular service. In each of the methods above we return a _P
 
     }
 
-... 
+...
 ```
 
-* We have changed the init function to handle the _Promise_ returned by the customersFactory.getCustomer(customerID) method. 
-	* The anonymous function passed to success will fire and update the ViewModel's, $scope, with the customer data, $scope.customer.
+* We have changed the init function to handle the _Promise_ returned by the customersFactory.getCustomer(customerID) method.
+	* The anonymous function passed to success will fire and update the ViewModel's, scope, with the customer data, this.customer.
 	* The anonymous function passed to error will fire if there is an error communicating with the API.
 
 
@@ -513,5 +513,5 @@ Check out the $http Angular service. In each of the methods above we return a _P
 
 [API Documentation](https://docs.angularjs.org/api)
 
-This is like the $.ajax in JQuery.  
-[Ajax HTTP Service](https://docs.angularjs.org/api/ng/service/$http) 
+This is like the $.ajax in JQuery.
+[Ajax HTTP Service](https://docs.angularjs.org/api/ng/service/$http)
