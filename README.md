@@ -7,7 +7,6 @@ We are going to dive into Angular Factories and Services.
 
 ## Demo
 
-
 #### Setup
 We have copied all of the code from the last lesson [wdi_9_angular_demo_routes](https://github.com/ga-wdi-boston/wdi_9_angular_demo_routes) into this repo to start off.
 
@@ -49,6 +48,9 @@ Factories use the [Revealing Module Javascript Pattern](http://addyosmani.com/re
   // Create a customers factory
   var customersFactory = function(){
     // customers is private, only available in this scope
+
+    var factory = {};
+
     var customers = [
       {
         id: 1,
@@ -113,11 +115,8 @@ Factories use the [Revealing Module Javascript Pattern](http://addyosmani.com/re
       }
     ]; // end of customers data
 
-    var factory = {};
-
     factory.getCustomers = function(){
-      // allow access to the list of customers
-      return customers;
+      return angular.copy(customers, factory.customers);
     };
 
     factory.getCustomer = function(customerId){
@@ -155,8 +154,8 @@ Factories use the [Revealing Module Javascript Pattern](http://addyosmani.com/re
 <!DOCTYPE html>
 <html ng-app="customersApp">
   <head>
-    <script src='js/angular.js'></script>
-    <script src='js/angular-route.js'></script>
+    <script src='bower_components/angularangular.js'></script>
+    <script src='bower_components/angular-route/angular-route.js'></script>
     <script src='app/app_done.js'></script>
    	<!-- customer factory -->
     <script src='app/services/customersFactory_done.js'></script>
@@ -180,8 +179,8 @@ Factories use the [Revealing Module Javascript Pattern](http://addyosmani.com/re
   var CustomersController = function(customersFactory){
     this.sortBy = "name";
     this.reverse = false;
-    // 2. Create an empty customers Array in the scope.
-    this.customers= [];
+    // 2. Set the controllers array of customers equal to the factories
+    this.customers= customerFactory.customers;
 
     // 3. Create a function that will set the customers Array in the scope
     // from the customersFactory
@@ -210,8 +209,8 @@ Factories use the [Revealing Module Javascript Pattern](http://addyosmani.com/re
 ```
 
 1. Inject the customersFactory into this controller
-2. Create an empty customers Array in the scope.
-3. Create a function that will set the customers Array in the scope from the customersFactory.getCustomers method.
+2. Set the controller's customers equal to the factory's customers within the scope.
+3. Create a function that will retrieve customers from our "DB".
 4. Initialize the controller.
 
 ##### Add the app/controllers/ordersController.js
@@ -221,7 +220,7 @@ Factories use the [Revealing Module Javascript Pattern](http://addyosmani.com/re
 
   var OrdersController = function($routeParams, customersFactory){
     var customerId = $routeParams.customerId;
-    this.customer= null;
+    this.customer= customersFactory.customer;
 
     // private function, not available outside of IIFE
 
@@ -242,107 +241,30 @@ Factories use the [Revealing Module Javascript Pattern](http://addyosmani.com/re
 })();
 ```
 1. Inject the customersFactory into this controller
-2. Create an null customer.
+2. Set the customer equal to the customerFactory's customer.
 3. Create a function, init, that will set the customers from the customerId param.
 4. Initialize the controller.
 
 ##### Add the app/views/orders.html
 
 ```
- <h3>{{ customer.name}}'s Orders</h3>
+ <h3>{{ orderCtrl.customer.name}}'s Orders</h3>
  <table>
    <tr>
 	<th>Product</th>
     <th>Total</th>
   </tr>
   <tr ng-repeat="order in customer.orders">
-    <td>{{ order.product }}</td>
-    <td>{{ order.total | currency }}</td>
+    <td>{{ orderCtrl.order.product }}</td>
+    <td>{{ orderCtrl.order.total | currency }}</td>
   </tr>
 </table>
 <br/>
 ```
 
-#### Services (Optional)
-
-Services behave somewhat like Factories. They are both Singletons. __But, a Service doesn't use the Self Revealing Function pattern.__
-
-
-_This is implemented in tbe "services" branch._
-
-##### Create a app/services/customerService.js. (Only the changes from Factory are shown.)
-
-```
-(function customersServiceIIFE(){
-
-  // Create a customers service
-  var customersService = function(){
-    // customers is private, only available in this scope
-    var customers = [
-     ...
-         ]; // end of customers data
-
-    this.getCustomers = function(){
-      // allow access to the list of customers
-      return customers;
-    };
-
-    this.getCustomer = function(customerId){
-      for(var i=0, len=customers.length; i < len; i++){
-        if(customers[i].id == parseInt(customerId)){
-          return customers[i];
-        }
-      }
-      return {};
-    };
-  };
-
-  angular.module('customersApp').service('customersService', customersService);
-})();
-
-```
-
-* An Angular Service provides a function that gets injected into a controller. _Note: we are NOT using a Self Revealing Function here. We have remove one level of indirection_.
-* The methods of a Service are set on the Service Singleton's "this" pointer.
-* The Service is registered using the angular.module('appName').service(...) method.
-
-##### Change the customers controller to use a service instead of a factory. (Only the changes from Factory are shown.)
-
-```
-(function customersControllerIIFE(){
-
-  // 1. Inject the customersService into this controller
-  var CustomersController = function(customersService){
-	 ...
-
-    function init(){
-      // Init the customers from the service
-      this.customers = customersService.getCustomers();
-    }
-	...
-
-  };
-
- // Prevent the minifier from breaking dependency injection.
- CustomersController.$inject = ['customersService'];
-
- ...
-
-})();
-
-```
-
-##### Change the shell file, index.html, to use a service instead of a factory. (Only the changes from Factory are shown.)
-
-```
- <!-- <script src='app/services/customersFactory_done.js'></script> -->
- <script src='app/services/customersService_done.js'></script>
-```
-
-
 #### Defining Application Wide Variables.
 
-Provide variables that don't belong in a factory, service or controller. They are application wide variables that have values.
+Provide variables that don't belong in a factory, or controller. They are application wide variables that have values.
 
 ##### Add app settings to the app/services/values.js
 
@@ -388,12 +310,12 @@ angular.module("customersApp").constant('appSettings', {
 ##### Use the app settings in the customers View, app/views/customers.html.
 
 ```
- <h3>{{ appSettings.title}} </h3>
+ <h3>{{ customersCtrl.appSettings.title}} </h3>
 ...
-<span>Total customers: {{customers.length}}</span>
+<span>Total customers: {{customersCtrl.customers.length}}</span>
 <br/>
 <br/>
-<footer>Version: {{ appSettings.version }}</footer>
+<footer>Version: {{ customersCtrl.appSettings.version }}</footer>
 
 ```
 
@@ -414,14 +336,20 @@ But, we will need to setup the Angular Factories we created above to make Ajax c
   // Create a customers factory
   var customersFactory = function($http){
     var factory = {};
+    factory.customers = [];
+    factory.cutomer = {};
 
     factory.getCustomers = function(){
       // allow access to the list of customers
-      return  $http.get('http://localhost:3000/customers');
+      return $http.get('http://localhost:3000/customers').success(function(response){
+        angulr.copy(response, factory.customers);
+      });
     };
 
     factory.getCustomer = function(customerId){
-      return  $http.get('http://localhost:3000/customers/' + customerId);
+      return  $http.get('http://localhost:3000/customers/' + customerId).sucess(function(response)
+        angular.copy(response, factory.customer);
+      });
     };
     return factory;
   };
@@ -439,6 +367,7 @@ But, we will need to setup the Angular Factories we created above to make Ajax c
 	``$http.get('http://localhost:3000/customers') ``
 * And we are making a HTTP GET Request for a specific customers data.
 	``$http.get('http://localhost:3000/customers/' + customerId) ``
+* Once this data comes back, we are setting the value of our factory to the response via angular copy. Angular copy is a deep copy. Not entirely sure what that means; don't care. It paves over any issues of timing or scope we might have.
 * Doing the weasel work of preventing the javascript minification problems.
 	``customersFactory.$inject = ['$http']; ``
 
@@ -449,20 +378,13 @@ Check out the $http Angular service. In each of the methods above we return a _P
 ```
 (function customersControllerIIFE(){
 
-  var CustomersController = function($scope, customersFactory, appSettings){
+  var CustomersController = function(customersFactory, appSettings){
 
 	...
     function init(){
       // Init the customers from the factory
       //this.customers = customersFactory.getCustomers();
       customersFactory.getCustomers()
-      .success(function(customers){
-        this.customers = customers;
-      })
-      .error(function(data, status, headers, config){
-        console.log("Error getting customers from the remote api");
-        alert("Error getting customers from the remote api");
-      });
     }
 
     init();
@@ -488,15 +410,6 @@ Check out the $http Angular service. In each of the methods above we return a _P
       // Search for the customer by id
       // this.customer = customersFactory.getCustomer(customerId);
       customersFactory.getCustomer(customerId)
-        .success(function(customer){
-          this.customer = customer;
-        })
-        .error(function(data, status, headers, config){
-          console.log("Error getting a customer from the remote api");
-        alert();ert("Error getting a customer from the remote api");
-
-        });
-
     }
 
 ...

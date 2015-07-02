@@ -6,13 +6,17 @@
       .when('/',
             {
               controller: 'customersController',
-              templateUrl: 'app/views/customers_done.html'
+              controllerAs: 'customersCtrl',
+              templateUrl: 'app/views/customers_done.html',
+
             }
            )
       .when('/orders/:customerId',
             {
               controller: 'ordersController',
-              templateUrl: 'app/views/orders_done.html'
+              controllerAs: 'ordersCtrl',
+              templateUrl: 'app/views/orders_done.html',
+
             }
            )
       .otherwise({redirectTo: '/'});

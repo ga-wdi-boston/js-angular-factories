@@ -2,7 +2,7 @@
 
   var OrdersController = function($routeParams, customersFactory){
     var customerId = $routeParams.customerId;
-    this.customer = null;
+    this.customer = customersFactory.customer;
 
     // private function, not available outside of IIFE
 
