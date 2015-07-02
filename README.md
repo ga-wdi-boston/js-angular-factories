@@ -318,6 +318,9 @@ angular.module("customersApp").constant('appSettings', {
 <footer>Version: {{ customersCtrl.appSettings.version }}</footer>
 
 ```
+## Lab 
+
+Let's revist our songs app. Create a factory, pull all of the logic out of your controller and put it into your factory. We want to keep our controllers nice and neat.
 
 ## Ajax (finally)
 
@@ -419,6 +422,9 @@ Check out the $http Angular service. In each of the methods above we return a _P
 	* The anonymous function passed to success will fire and update the ViewModel's, scope, with the customer data, this.customer.
 	* The anonymous function passed to error will fire if there is an error communicating with the API.
 
+## Lab
+
+Time to get serious with our songs app. Create an API (either in Node.js or Rails) and seed some songs. Then, refactor your angular app to read and render those songs.
 
 ## Documentation
 
