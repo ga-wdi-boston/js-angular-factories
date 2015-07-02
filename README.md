@@ -17,8 +17,6 @@ Oh, all but the app/customersData.js. And we'll see why we don't need this later
 
 The Singleton Design pattern will prevent more than one instance of a class to occur. One can only create one instance of a Singleton.
 
-We've seen Singletons in the past when we've used an object literal to create only one Carlot, TodoList, etc.
-
 Factories and Services are Singletons.
 
 [Singleton Pattern in Javascript](http://addyosmani.com/resources/essentialjsdesignpatterns/book/#singletonpatternjavascript)
@@ -50,6 +48,8 @@ Factories use the [Revealing Module Javascript Pattern](http://addyosmani.com/re
     // customers is private, only available in this scope
 
     var factory = {};
+    factory.customers = [];
+    factory.customer = {};
 
     var customers = [
       {
@@ -122,7 +122,7 @@ Factories use the [Revealing Module Javascript Pattern](http://addyosmani.com/re
     factory.getCustomer = function(customerId){
       for(var i=0, len=customers.length; i < len; i++){
         if(customers[i].id == parseInt(customerId)){
-          return customers[i];
+          return angular.copy(customers[i], factory.customer);
         }
       }
       return {};
@@ -143,7 +143,7 @@ Factories use the [Revealing Module Javascript Pattern](http://addyosmani.com/re
 	* Create an empty object literal, "factory".
 	* Create a method on factory, getCustomers, that can be used to access the customer data.
 	* Create a method on factory, getCustomers, that given a customer id will return data for that customer.
-	* return the object literal "factory". _It will encapsulate all it's implementation and data inside the two methods, customersData and customerData._
+	* return the object literal "factory".
 
 * Register the Angular Factory. So it's available throughout the application.
 
