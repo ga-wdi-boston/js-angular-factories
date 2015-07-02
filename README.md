@@ -186,7 +186,7 @@ Factories use the [Revealing Module Javascript Pattern](http://addyosmani.com/re
     // from the customersFactory
     function init(){
       // Init the customers from the factory
-      this.customers = customersFactory.getCustomers();
+      customersFactory.getCustomers();
     }
 
     // 4. Initialize the controller.
@@ -226,7 +226,7 @@ Factories use the [Revealing Module Javascript Pattern](http://addyosmani.com/re
 
     function init(){
       // Search for the customer by id
-      this.customer = customersFactory.getCustomer(customerId);
+      customersFactory.getCustomer(customerId);
     }
 
     init();
