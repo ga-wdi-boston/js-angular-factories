@@ -4,22 +4,12 @@ We are going to dive into Angular Factories and Services.
 
 ## Objectives
 
-
 ## Demo
 
 #### Setup
-We have copied all of the code from the last lesson [wdi_9_angular_demo_routes](https://github.com/ga-wdi-boston/wdi_9_angular_demo_routes) into this repo to start off.
-
+We have copied all of the code from the last lesson [js-angular-routes](https://github.com/ga-wdi-boston/js-angular-routes) into this repo to start off.
 
 Oh, all but the app/customersData.js. And we'll see why we don't need this later.
-
-#### Singleton
-
-The Singleton Design pattern will prevent more than one instance of a class to occur. One can only create one instance of a Singleton.
-
-Factories and Services are Singletons.
-
-[Singleton Pattern in Javascript](http://addyosmani.com/resources/essentialjsdesignpatterns/book/#singletonpatternjavascript)
 
 #### Built-in Services
 These services are provided by Angular.
@@ -30,17 +20,15 @@ These services are provided by Angular.
 * $window
 * $q - Provides a Promise that can be used to handle asynchronous callbacks.
 
-
 #### Factories
 
 Will return a custom object that can be used by multiple other components, typically controllers.
 
 Factories use the [Revealing Module Javascript Pattern](http://addyosmani.com/resources/essentialjsdesignpatterns/book/#revealingmodulepatternjavascript) to create the custom object they return.
 
+##### Create a app/factories/customerFactory.js
 
-##### Create a app/services/customerFactory.js
-
-```
+```javascript
 (function customersFactoryIIFE(){
 
   // Create a customers factory
@@ -148,31 +136,9 @@ Factories use the [Revealing Module Javascript Pattern](http://addyosmani.com/re
 * Register the Angular Factory. So it's available throughout the application.
 
 
-##### Add the customer factory to the index.html.
-
-```
-<!DOCTYPE html>
-<html ng-app="customersApp">
-  <head>
-    <script src='bower_components/angularangular.js'></script>
-    <script src='bower_components/angular-route/angular-route.js'></script>
-    <script src='app/app_done.js'></script>
-   	<!-- customer factory -->
-    <script src='app/services/customersFactory_done.js'></script>
-    <script src='app/controllers/customersController_done.js'></script>
-    <script src='app/controllers/ordersController_done.js'></script>
-  </head>
-
-  <body>
-    <div ng-view></div>
-  </body>
-</html>
-
-```
-
 ##### Add the app/controllers/customersController.js
 
-```
+```javascript
 (function customersControllerIIFE(){
 
   // 1. Inject the customersFactory into this controller
@@ -215,12 +181,12 @@ Factories use the [Revealing Module Javascript Pattern](http://addyosmani.com/re
 
 ##### Add the app/controllers/ordersController.js
 
-```
+```javascript
 (function ordersControllerIIFE(){
 
   var OrdersController = function($routeParams, customersFactory){
     var customerId = $routeParams.customerId;
-    this.customer= customersFactory.customer;
+    this.customer = customersFactory.customer;
 
     // private function, not available outside of IIFE
 
@@ -245,9 +211,39 @@ Factories use the [Revealing Module Javascript Pattern](http://addyosmani.com/re
 3. Create a function, init, that will set the customers from the customerId param.
 4. Initialize the controller.
 
-##### Add the app/views/orders.html
+##### Add the customers factory, customers controller and orders controller to the index.html.
+
+```html
+<!DOCTYPE html>
+<html ng-app="customersApp">
+  <head>
+    <title>Angular is Fun!</title>
+  </head>
+  <body>
+    <ng-view></ng-view>
+
+    <!-- vendor javascript -->
+    <script src='bower_components/angular/angular.js'></script>
+    <script src='bower_components/angular-route/angular-route.js'></script>
+
+    <!-- app -->
+    <script src='app/app_done.js'></script>
+
+    <!-- factories -->
+    <script src='app/factories/customersFactory.js'></script>
+
+    <!-- controllers -->
+    <script src='app/controllers/customersController.js'></script>
+    <script src='app/controllers/customersController.js'></script>
+
+  </body>
+</html>
 
 ```
+
+##### Add the app/views/orders.html
+
+```html
  <h3>{{ orderCtrl.customer.name}}'s Orders</h3>
  <table>
    <tr>
@@ -268,7 +264,7 @@ Provide variables that don't belong in a factory, or controller. They are applic
 
 ##### Add app settings to the app/services/values.js
 
-```
+```javascript
 // Create applicaton wide settings
 angular.module("customersApp").value('appSettings', {
   title: "Customers Application",
@@ -287,7 +283,7 @@ angular.module("customersApp").constant('appSettings', {
 
 ##### Add the app settings to the scope for the customers View, app/controllers/customersController.js .
 
-```
+```javascript
 (function customersControllerIIFE(){
 
   // 1. Inject application wide value, appSetting.
@@ -318,7 +314,7 @@ angular.module("customersApp").constant('appSettings', {
 <footer>Version: {{ customersCtrl.appSettings.version }}</footer>
 
 ```
-## Lab 
+## Lab
 
 Let's revist our songs app. Create a factory, pull all of the logic out of your controller and put it into your factory. We want to keep our controllers nice and neat.
 
@@ -333,7 +329,7 @@ But, we will need to setup the Angular Factories we created above to make Ajax c
 
 ##### Modify the app/services/customersFactory.js
 
-```
+```javascript
 (function customersFactoryIIFE(){
 
   // Create a customers factory
@@ -378,7 +374,7 @@ Check out the $http Angular service. In each of the methods above we return a _P
 
 ##### Modify the app/controllers/customersController.js
 
-```
+```javascript
 (function customersControllerIIFE(){
 
   var CustomersController = function(customersFactory, appSettings){
@@ -407,7 +403,7 @@ Check out the $http Angular service. In each of the methods above we return a _P
 
 #### Modify the app/controllers/ordersController.js
 
-```
+```javascript
 ...
     function init(){
       // Search for the customer by id
