@@ -4,6 +4,11 @@ We are going to dive into Angular Factories and Services.
 
 ## Objectives
 
+* Learn how to implement factories, services and values in our apps
+* Learn some of the built-in services angular gives us for free
+* Learn how to make API calls from our angular apps
+* Learn how to transfer data between our factories and our controllers
+
 ## Demo
 
 #### Setup
