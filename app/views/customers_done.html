@@ -4,13 +4,13 @@ Filter: <input type="text" ng-model="customerFilter.name"/>
 <br/>
 <table>
   <tr>
-    <th ng-click="doSort('name')">Name</th>
-    <th ng-click="doSort('city')">City</th>
-    <th ng-click="doSort('orderTotal')">Order Total</th>
-    <th ng-click="doSort('joined')">Joined</th>
+    <th ng-click="customersCtrl.doSort('name')">Name</th>
+    <th ng-click="customersCtrl.doSort('city')">City</th>
+    <th ng-click="customersCtrl.doSort('orderTotal')">Order Total</th>
+    <th ng-click="customersCtrl.doSort('joined')">Joined</th>
     <th>&nbsp;</th>
   </tr>
-  <tr ng-repeat="cust in customersCtrl.customers | filter: customerFilter | orderBy:sortBy:reverse">
+  <tr ng-repeat="cust in customersCtrl.customers | filter: customerFilter | orderBy:customersCtrl.sortBy:customersCtrl.reverse">
     <td>{{ cust.name }}</td>
     <td>{{ cust.city}}</td>
     <td>{{ cust.orderTotal | currency }}</td>

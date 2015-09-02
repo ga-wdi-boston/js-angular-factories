@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html ng-app="customersApp">
+  <head>
+    <title>Angular is fun!</title>
+  </head>
+
+  <body>
+    <div ng-view></div>
+
+    <!-- vendor javascript -->
+    <script src='bower_components/angular/angular.js'></script>
+    <script src='bower_components/angular-route/angular-route.js'></script>
+
+    <!-- app -->
+    <script src='app/app.js'></script>
+
+    <!-- services -->
+    <script src='app/services/values.js'></script>
+
+    <!-- factories -->
+    <script src='app/factories/utils.js'></script>
+    <script src='app/factories/customersFactory.js'></script>
+
+    <!-- controllers -->
+    <script src='app/controllers/customersController_done.js'></script>
+    <script src='app/controllers/ordersController_done.js'></script>
+  </body>
+</html>
