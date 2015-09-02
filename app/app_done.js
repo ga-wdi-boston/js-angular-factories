@@ -7,7 +7,7 @@
             {
               controller: 'customersController',
               controllerAs: 'customersCtrl',
-              templateUrl: 'app/views/customers_done.html',
+              templateUrl: 'app/views/customers_done.html'
 
             }
            )
@@ -15,7 +15,7 @@
             {
               controller: 'ordersController',
               controllerAs: 'ordersCtrl',
-              templateUrl: 'app/views/orders_done.html',
+              templateUrl: 'app/views/orders_done.html'
 
             }
            )
